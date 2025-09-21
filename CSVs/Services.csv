@@ -1,0 +1,19 @@
+﻿Table Name,Carrier ID,Carrier Name ID,Carrier Name Code (rename to service Id),Carrier Group,Carrier Name,Carrier Service,Transport Address,Transport Contact Name,Transport Contact Title,Transport Contact Phone,Transport Contact Email
+Carrier,CA0001,CN0001,APE,Aus_Post,Australia Post,Express,"480 Swan St, Richmond, VIC, 3121",Rob Podnar,"Account Manager - Parcel, Post & eCommerce Services",+61 409 181 468,​Rob.Podnar@auspost.com.au
+Carrier,CA0001,CN0001,X4B,Aus_Post,Australia Post,Standard,"480 Swan St, Richmond, VIC, 3121",Rob Podnar,"Account Manager - Parcel, Post & eCommerce Services",+61 409 181 468,​Rob.Podnar@auspost.com.au
+Carrier,CA0001,CN0001,ID25,Aus_Post,Australia Post,ID25,"480 Swan St, Richmond, VIC, 3121",Rob Podnar,"Account Manager - Parcel, Post & eCommerce Services",+61 409 181 468,​Rob.Podnar@auspost.com.au
+Carrier,CA0001,CN0002,005,TFE,Team Global Express,Standard,,,,,
+Carrier,CA0001,CN0003,RDR,Rendr,Rendr,Standard,,,,,
+Carrier,CA0001,CN0004,AUS,Other,Unknown,Unknown,,,,,
+Carrier,CA0001,CN0005,CHCK,Other,Unknown,Unknown,,,,,
+Carrier,CA0001,CN0006,CP,Other,Unknown,Unknown,,,,,
+Carrier,CA0001,CN0007,EXP,Other,Unknown,Unknown,,,,,
+Carrier,CA0001,CN0008,HE,Other,Unknown,Unknown,,,,,
+Carrier,CA0001,CN0009,PICK,Other,Unknown,Unknown,,,,,
+Carrier,CA0001,CN0010,STD,Other,Unknown,Unknown,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,

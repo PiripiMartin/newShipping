@@ -8,6 +8,50 @@ USE Shipping;
 -- consignmentId serves as the primary key
 
 -- =====================================================
+-- CARRIERS TABLE
+-- =====================================================
+-- Table containing carrier company information
+-- carrierId serves as the primary key
+
+CREATE TABLE carriers (
+    carrierId INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Auto-generated unique carrier ID',
+    carrierName VARCHAR(100) NOT NULL COMMENT 'Name of the carrier company',
+    carrierGroup VARCHAR(50) NOT NULL COMMENT 'Group classification of the carrier',
+    transportAddress TEXT COMMENT 'Physical address of the transport facility',
+    transportContactName VARCHAR(100) COMMENT 'Name of the transport contact person',
+    transportContactTitle VARCHAR(150) COMMENT 'Job title of the transport contact person',
+    transportContactPhone VARCHAR(20) COMMENT 'Phone number of the transport contact',
+    transportContactEmail VARCHAR(100) COMMENT 'Email address of the transport contact',
+    
+    -- Indexes for performance
+    INDEX idx_carrierName (carrierName),
+    INDEX idx_carrierGroup (carrierGroup)
+);
+
+-- =====================================================
+-- SERVICES TABLE
+-- =====================================================
+-- Table containing service information linked to carriers
+-- serviceId serves as the primary key
+
+CREATE TABLE services (
+    serviceId VARCHAR(10) NOT NULL PRIMARY KEY COMMENT 'Service ID code (e.g., APE, X4B)',
+    carrierService VARCHAR(50) NOT NULL COMMENT 'Name/type of the carrier service',
+    carrierId INT UNSIGNED NOT NULL COMMENT 'Foreign key linking to carrier table',
+    
+    -- Foreign key constraint
+    CONSTRAINT fk_service_carrierId 
+        FOREIGN KEY (carrierId) 
+        REFERENCES carriers(carrierId) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    
+    -- Indexes for performance
+    INDEX idx_carrierService (carrierService),
+    INDEX idx_carrierId (carrierId)
+);
+
+-- =====================================================
 -- PROMOTIONS TABLE
 -- =====================================================
 -- Table containing promotion information
@@ -39,10 +83,15 @@ CREATE TABLE orders (
     state CHAR(3) NOT NULL COMMENT 'State abbreviation (e.g., VIC, NSW)',
     fromPostcode MEDIUMINT UNSIGNED NOT NULL COMMENT 'Origin postal code',
     toPostcode MEDIUMINT UNSIGNED NOT NULL COMMENT 'Destination postal code',
-    serviceId VARCHAR(10) NOT NULL COMMENT 'Service ID identifying the carrier',
+    serviceId VARCHAR(10) NOT NULL COMMENT 'Service ID identifying the carrier service',
     promotionId INT UNSIGNED COMMENT 'Foreign key linking to promotions table',
     
-    -- Foreign key constraint
+    -- Foreign key constraints
+    CONSTRAINT fk_orders_serviceId 
+        FOREIGN KEY (serviceId) 
+        REFERENCES services(serviceId) 
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE,
     CONSTRAINT fk_orders_promotionId 
         FOREIGN KEY (promotionId) 
         REFERENCES promotions(promotionId) 
@@ -88,4 +137,69 @@ CREATE TABLE sales (
     INDEX idx_styleCategoryName (styleCategoryName),
     INDEX idx_units (units),
     INDEX idx_salesAmount (salesAmount)
+);
+
+-- =====================================================
+-- CARRIER COSTS TABLE
+-- =====================================================
+-- Table containing carrier cost information
+-- consignmentId serves as both primary key and foreign key
+
+CREATE TABLE carrierCosts (
+    consignmentId VARCHAR(20) NOT NULL PRIMARY KEY COMMENT 'Consignment ID - primary key and foreign key to orders',
+    amountExcludingTax DECIMAL(12,2) NOT NULL COMMENT 'Amount excluding tax',
+    billedLength DECIMAL(8,3) COMMENT 'Billed length in centimeters',
+    billedWidth DECIMAL(8,3) COMMENT 'Billed width in centimeters', 
+    billedHeight DECIMAL(8,3) COMMENT 'Billed height in centimeters',
+    cubicWeight DECIMAL(10,3) COMMENT 'Cubic weight calculation',
+    billedWeight DECIMAL(10,3) COMMENT 'Billed weight in kilograms',
+    
+    -- Foreign key constraint
+    CONSTRAINT fk_carrierCost_consignmentId 
+        FOREIGN KEY (consignmentId) 
+        REFERENCES orders(consignmentId) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    
+    -- Check constraints to ensure data quality
+    CONSTRAINT chk_amountExcludingTax_not_negative CHECK (amountExcludingTax >= 0),
+    CONSTRAINT chk_billedLength_positive CHECK (billedLength IS NULL OR billedLength > 0),
+    CONSTRAINT chk_billedWidth_positive CHECK (billedWidth IS NULL OR billedWidth > 0),
+    CONSTRAINT chk_billedHeight_positive CHECK (billedHeight IS NULL OR billedHeight > 0),
+    CONSTRAINT chk_cubicWeight_positive CHECK (cubicWeight IS NULL OR cubicWeight > 0),
+    CONSTRAINT chk_billedWeight_positive CHECK (billedWeight IS NULL OR billedWeight > 0),
+    
+    -- Indexes for performance
+    INDEX idx_amountExcludingTax (amountExcludingTax),
+    INDEX idx_billedWeight (billedWeight),
+    INDEX idx_cubicWeight (cubicWeight)
+);
+
+-- =====================================================
+-- FULFILLMENT COSTS TABLE
+-- =====================================================
+-- Table containing fulfillment cost information
+-- fulfillmentCostId serves as the primary key
+
+CREATE TABLE fulfillmentCosts (
+    fulfillmentCostId INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Auto-generated unique fulfillment cost ID',
+    effectiveDateFrom DATE NOT NULL COMMENT 'Start date when this cost is effective',
+    effectiveDateTo DATE NOT NULL COMMENT 'End date when this cost is effective',
+    costType VARCHAR(20) NOT NULL COMMENT 'Type of cost (Fixed, Variable)',
+    costCode VARCHAR(10) NOT NULL COMMENT 'Cost code identifier (DCF, HOF, PAC, LAB)',
+    costDescription VARCHAR(100) NOT NULL COMMENT 'Description of the cost',
+    allocationUOM VARCHAR(20) NOT NULL COMMENT 'Unit of measure for allocation (Unit, etc)',
+    costPerUOM DECIMAL(8,2) NOT NULL COMMENT 'Cost per unit of measure',
+    allocationMethodology VARCHAR(50) NOT NULL COMMENT 'Method of cost allocation (Per Unit, etc)',
+    
+    -- Check constraints to ensure data quality
+    CONSTRAINT chk_effectiveDateTo_after_from CHECK (effectiveDateTo >= effectiveDateFrom),
+    CONSTRAINT chk_costPerUOM_not_negative CHECK (costPerUOM >= 0),
+    
+    -- Indexes for performance
+    INDEX idx_effectiveDateFrom (effectiveDateFrom),
+    INDEX idx_effectiveDateTo (effectiveDateTo),
+    INDEX idx_costType (costType),
+    INDEX idx_costCode (costCode),
+    INDEX idx_date_range (effectiveDateFrom, effectiveDateTo)
 );

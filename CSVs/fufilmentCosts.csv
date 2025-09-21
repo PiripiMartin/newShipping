@@ -1,0 +1,5 @@
+﻿Table Name,Fulfilment Cost ID,Effective Date (From),Effective Date (To),Cost Type,Cost Code,Cost Description,Allocation UOM,Cost Per UOM,Allocation Methodology
+Fulfilment_Cost,FC0001,1/1/2024,31/12/2024,Fixed,DCF,DC Fixed Cost,Unit,0.80,Per Unit
+Fulfilment_Cost,FC0001,1/1/2024,31/12/2024,Fixed,HOF,HO Online Fixed Cost,Unit,1.90,Per Unit
+Fulfilment_Cost,FC0001,1/1/2024,31/12/2024,Variable,PAC,Online Packaging Cost,Unit,0.34,Per Unit
+Fulfilment_Cost,FC0001,1/1/2024,31/12/2024,Variable,LAB,Online Labour Cost,Unit,2.43,Per Unit
