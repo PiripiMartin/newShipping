@@ -7,6 +7,30 @@ USE Shipping;
 -- Primary table containing order information
 -- consignmentId serves as the primary key
 
+-- =====================================================
+-- PROMOTIONS TABLE
+-- =====================================================
+-- Table containing promotion information
+-- promotionId serves as the primary key
+
+CREATE TABLE promotions (
+    promotionId INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT 'Auto-generated unique promotion ID',
+    promotionDescription TEXT NOT NULL COMMENT 'Description of the promotion',
+    startDate DATE NOT NULL COMMENT 'Start date of the promotion',
+    endDate DATE NOT NULL COMMENT 'End date of the promotion',
+    calendarYear YEAR NOT NULL COMMENT 'Calendar year',
+    financialYear YEAR NOT NULL COMMENT 'Financial year',
+
+    -- Check constraints to ensure data quality
+    CONSTRAINT chk_promotion_dates CHECK (endDate >= startDate),
+    
+    -- Indexes for performance
+    INDEX idx_startDate (startDate),
+    INDEX idx_endDate (endDate),
+    INDEX idx_calendarYear (calendarYear),
+    INDEX idx_financialYear (financialYear)
+);
+
 CREATE TABLE orders (
     consignmentId VARCHAR(20) NOT NULL PRIMARY KEY COMMENT 'Unique consignment ID - primary key',
     orderDate DATE NOT NULL COMMENT 'Date when the order was placed',
@@ -16,13 +40,24 @@ CREATE TABLE orders (
     fromPostcode MEDIUMINT UNSIGNED NOT NULL COMMENT 'Origin postal code',
     toPostcode MEDIUMINT UNSIGNED NOT NULL COMMENT 'Destination postal code',
     serviceId VARCHAR(10) NOT NULL COMMENT 'Service ID identifying the carrier',
+    promotionId INT UNSIGNED COMMENT 'Foreign key linking to promotions table',
+    
+    -- Foreign key constraint
+    CONSTRAINT fk_orders_promotionId 
+        FOREIGN KEY (promotionId) 
+        REFERENCES promotions(promotionId) 
+        ON DELETE SET NULL 
+        ON UPDATE CASCADE,
     
     -- Indexes for performance
     INDEX idx_orderDate (orderDate),
     INDEX idx_orderNo (orderNo),
     INDEX idx_locationCode (locationCode),
     INDEX idx_state (state),
-    INDEX idx_serviceId (serviceId)
+    INDEX idx_fromPostcode (fromPostcode),
+    INDEX idx_toPostcode (toPostcode),
+    INDEX idx_serviceId (serviceId),
+    INDEX idx_promotionId (promotionId)
 );
 
 
