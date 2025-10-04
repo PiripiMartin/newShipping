@@ -97,6 +97,11 @@ CREATE TABLE orders (
         REFERENCES promotions(promotionId) 
         ON DELETE SET NULL 
         ON UPDATE CASCADE,
+    CONSTRAINT fk_orders_toPostcode 
+        FOREIGN KEY (toPostcode) 
+        REFERENCES deliveryZones(postcode) 
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE,
     
     -- Indexes for performance
     INDEX idx_orderDate (orderDate),
@@ -126,10 +131,6 @@ CREATE TABLE sales (
         ON DELETE CASCADE 
         ON UPDATE CASCADE,
     
-    -- Check constraints to ensure data quality
-    CONSTRAINT chk_units_positive CHECK (units > 0),
-    CONSTRAINT chk_salesAmount_not_negative CHECK (salesAmount >= 0),
-    CONSTRAINT chk_costOfGoodsSold_not_negative CHECK (costOfGoodsSold >= 0),
     
     -- Indexes for performance
     INDEX idx_consignmentId (consignmentId),
@@ -202,4 +203,52 @@ CREATE TABLE fulfillmentCosts (
     INDEX idx_costType (costType),
     INDEX idx_costCode (costCode),
     INDEX idx_date_range (effectiveDateFrom, effectiveDateTo)
+);
+
+-- =====================================================
+-- CARRIER COST RECOVERIES TABLE
+-- =====================================================
+-- Table containing carrier cost recovery information
+-- consignmentId serves as the primary key and foreign key
+
+CREATE TABLE carrierCostRecoveries (
+    consignmentId VARCHAR(20) NOT NULL PRIMARY KEY COMMENT 'Consignment ID - primary key and foreign key to orders',
+    freightRecovery DECIMAL(8,2) NOT NULL COMMENT 'Freight recovery amount in dollars',
+    
+    -- Foreign key constraint
+    CONSTRAINT fk_carrierCostRecoveries_consignmentId 
+        FOREIGN KEY (consignmentId) 
+        REFERENCES orders(consignmentId) 
+        ON DELETE CASCADE 
+        ON UPDATE CASCADE,
+    
+    -- Check constraints to ensure data quality
+    CONSTRAINT chk_freightRecovery_not_negative CHECK (freightRecovery >= 0),
+    
+    -- Indexes for performance
+    INDEX idx_freightRecovery (freightRecovery)
+);
+
+-- =====================================================
+-- DELIVERY ZONES TABLE
+-- =====================================================
+-- Table containing delivery zone information
+-- postcode serves as the primary key
+
+CREATE TABLE deliveryZones (
+    postcode MEDIUMINT UNSIGNED NOT NULL PRIMARY KEY COMMENT 'Postcode - primary key',
+    destinationZoneCode VARCHAR(10) NOT NULL COMMENT 'Destination zone code (e.g., AAT, BR)',
+    destinationZoneState VARCHAR(10) NOT NULL COMMENT 'Destination zone state',
+    description VARCHAR(50) NOT NULL COMMENT 'Zone description',
+    postcodeDeliveryZone VARCHAR(20) NOT NULL COMMENT 'Postcode delivery zone identifier',
+    stateClassification VARCHAR(50) NOT NULL COMMENT 'State classification (Same State, Distant State, etc)',
+    stateArea VARCHAR(20) NOT NULL COMMENT 'State area (Metro, Remote, etc)',
+    postcodeDeliveryZoneDescription VARCHAR(50) NOT NULL COMMENT 'Full postcode delivery zone description',
+    
+    -- Indexes for performance
+    INDEX idx_destinationZoneCode (destinationZoneCode),
+    INDEX idx_destinationZoneState (destinationZoneState),
+    INDEX idx_stateClassification (stateClassification),
+    INDEX idx_stateArea (stateArea),
+    INDEX idx_postcodeDeliveryZone (postcodeDeliveryZone)
 );

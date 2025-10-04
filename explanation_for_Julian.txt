@@ -1,0 +1,35 @@
+sproc is GetAverageNetProfitByOrder
+
+this is how you call it: 
+
+CALL GetAverageNetProfitByOrder(
+    '2024-01-01',           -- Start date
+    '2024-12-31',           -- End date
+    NULL,                   -- Carrier name
+    'LOOSE KNIVES',                   -- Style category
+    NULL,                   -- Promotion ID
+    NULL,                   -- State
+    NULL,                   -- From postcode
+    NULL,                   -- To postcode
+    NULL,                   -- State classification
+    NULL,                   -- State area
+    NULL           -- Postcode delivery zone description
+);
+
+Any can be null, except for start and end date. 
+
+Promotion selection can be null, if they want to change should be a drop down of all promotion id's From
+SELECT * from promotions. There are only 30 so you can hardcode if you want 
+
+State should be a drop down, look in the db for how it is stored eg 'VIC'
+
+State classification, state area, and postcode delivery zone description should all be drop downs. use the table deliveryZones to get all these. 
+
+
+this is what it will return: 
+# total_orders, total_units, avg_gross_profit_percentage, avg_fulfillment_cost_percentage, avg_net_carrier_cost_percentage, avg_total_logistics_cost_percentage, avg_net_profit_percentage, min_net_profit_percentage, max_net_profit_percentage, stddev_net_profit_percentage, total_gross_sales, total_cogs, total_gross_profit, total_fulfillment_cost, total_carrier_cost, total_freight_recovery, total_net_carrier_cost, total_logistics_cost, total_net_profit, overall_gross_profit_pct, overall_logistics_cost_pct, overall_net_profit_pct, orders_with_negative_profit, orders_0_to_10_pct, orders_10_to_20_pct, orders_20_to_30_pct, orders_over_30_pct
+'4003', '7101.00', '72.44', '32.35', '32.17', '64.53', '7.92', '-1414.68', '285.99', '113.42', '221616.69', '55297.99', '166318.70', '38842.4700', '43875.49', '14753.25', '29122.24', '67964.7100', '98353.9900', '75.05', '30.67', '44.38', '981', '148', '188', '232', '2454'
+
+
+plz Make it look nice. Thanks!!
+
