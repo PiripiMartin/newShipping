@@ -63,3 +63,6 @@ LEFT JOIN orders o ON s.consignmentId = o.consignmentId
 LEFT JOIN carrierCosts cc ON o.consignmentId = cc.consignmentId
 LEFT JOIN carrierCostRecoveries ccr ON o.consignmentId = ccr.consignmentId;
 
+
+
+

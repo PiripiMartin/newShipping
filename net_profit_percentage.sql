@@ -21,3 +21,6 @@ SELECT
     ) as NetProfitPercentage
 FROM sales;
 
+
+
+
